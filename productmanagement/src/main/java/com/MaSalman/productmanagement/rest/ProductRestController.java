@@ -1,10 +1,14 @@
 package com.MaSalman.productmanagement.rest;
 
+import com.MaSalman.productmanagement.entity.Category;
 import com.MaSalman.productmanagement.entity.Product;
+import com.MaSalman.productmanagement.exeption.ProductNotFoundExeption;
+import com.MaSalman.productmanagement.service.CategoryServiceDao;
 import com.MaSalman.productmanagement.service.ProductServiceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
 import java.util.List;
 
 @RestController
@@ -13,9 +17,12 @@ public class ProductRestController {
 
     private final ProductServiceDao productServiceDao;
 
+
+
     @Autowired
     public ProductRestController(ProductServiceDao productServiceDao) {
         this.productServiceDao = productServiceDao;
+
     }
 
     @GetMapping("/product")
@@ -23,10 +30,16 @@ public class ProductRestController {
         return productServiceDao.findAll();
     }
 
+    @GetMapping("/product/{product_id}")
+    public Product getProduct(@PathVariable int product_id){
+        Product tempProduct = productServiceDao.findById(product_id);
+        return tempProduct;
+    }
+
     @PostMapping("/product")
     public Product addProduct(@RequestBody Product product) {
         if (product == null) {
-            throw new RuntimeException("Product not found");
+            throw new ProductNotFoundExeption("Product not found");
         }
         product.setId(0);
         productServiceDao.save(product);
@@ -43,9 +56,10 @@ public class ProductRestController {
     public String deleteProduct(@PathVariable int product_id) {
         Product product = productServiceDao.findById(product_id);
         if (product == null) {
-            throw new RuntimeException("Product not found with id - " + product_id);
+            throw new ProductNotFoundExeption("Product not found with id - " + product_id);
         }
         productServiceDao.delete(product_id);
         return "Deleted product id - " + product_id;
     }
-}
+
+    }

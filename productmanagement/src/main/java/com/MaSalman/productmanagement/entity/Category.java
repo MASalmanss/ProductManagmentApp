@@ -33,11 +33,9 @@ public class Category {
     public Category() {
     }
 
-    public Category(String name, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Category(String name, String description) {
         this.name = name;
         this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     @PrePersist
